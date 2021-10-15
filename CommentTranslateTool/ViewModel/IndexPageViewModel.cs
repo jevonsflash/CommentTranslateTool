@@ -33,76 +33,23 @@ namespace Workshop.ViewModel
             CurrentContent = new TextDocument();
             ResponseContent = new TextDocument();
             ContinueCommand = new RelayCommand(ContinueAction);
+            OpenCommand = new RelayCommand(OpenAction);
             CopyToClipboardCommand = new RelayCommand(CopyToClipboardAction);
             this.PropertyChanged += IndexPageViewModel_PropertyChanged;
-            ParserProviders = new List<ParserProvider>();
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "C#",
-                Type = "C#",
-                ParserType = typeof(CSharpCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "C++",
-                Type = "C++",
-                ParserType = typeof(CppCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "JavaScript",
-                Type = "JavaScript",
-                ParserType = typeof(JavaScriptCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "CSS",
-                Type = "CSS",
-                ParserType = typeof(CssCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "Python",
-                Type = "Python",
-                ParserType = typeof(PythonCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "VB",
-                Type = "VB",
-                ParserType = typeof(VBCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "HTML",
-                Type = "HTML",
-                ParserType = typeof(HtmlCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "Xaml",
-                Type = "XML",
-
-                ParserType = typeof(XamlCommentParser)
-
-            });
-            ParserProviders.Add(new ParserProvider()
-            {
-                Name = "XML",
-                Type = "XML",
-                ParserType = typeof(XmlCommentParser)
-
-            });
-
+            ParserProviders = new List<ParserProvider>(ParserProvider.GetAllProviders());
             this.CurrentParserProvider = this.ParserProviders.First();
 
+        }
+
+        private void OpenAction()
+        {
+            var result = ImportHelper.ImportFrom();
+            if (string.IsNullOrEmpty(result.Item1) || result.Item2 == null)
+            {
+                return;
+            }
+            this.CurrentContent.Text = result.Item1;
+            this.CurrentParserProvider = this.ParserProviders.First(c => c.Name == result.Item2.Name);
         }
 
         private void IndexPageViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -280,6 +227,7 @@ namespace Workshop.ViewModel
 
         public RelayCommand ContinueCommand { get; set; }
         public RelayCommand CopyToClipboardCommand { get; set; }
+        public RelayCommand OpenCommand { get; set; }
 
     }
 }

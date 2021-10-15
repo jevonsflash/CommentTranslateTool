@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Workshop.View"
+      xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
       mc:Ignorable="d" 
       DataContext="{Binding Source={StaticResource Locator},Path=BatchProcessPage}"
 
@@ -11,6 +12,66 @@
       Title="BatchProcessPage">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" >
+                <Label Content="语言" VerticalAlignment="Center"></Label>
+                <ComboBox Width="100"  VerticalAlignment="Center" ItemsSource="{Binding ParserProviders}" SelectedItem="{Binding CurrentParserProvider}" DisplayMemberPath="Name"   
+                ></ComboBox>
+                <Button Content="添加文件" Command="{Binding OpenCommand}" Width="120"></Button>
+
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" >
+                <Button Content="清空列表"  Command="{Binding ClearCommand}" Width="120"></Button>
+                <Button Content="开始翻译" Command="{Binding ContinueCommand}" Width="120"></Button>
+
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" >
+
+            <DataGrid Grid.Row="0"
+						VerticalScrollBarVisibility="Visible"
+			          AutoGenerateColumns="False"
+			          ItemsSource="{Binding FileList}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="文件" Binding="{Binding Name}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="位置" Width="350" Binding="{Binding Path }"></DataGridTextColumn>
+                    <DataGridTextColumn Header="进度" Binding="{Binding Progress }"></DataGridTextColumn>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <mah:MetroProgressBar x:Name="PriceProgressBar"
+                                                      Width="500"
+                                                      Height="20"
+                                                      Margin="5 2"
+                                                      VerticalAlignment="Center"
+                                                      Background="Transparent"
+                                                      Foreground="{DynamicResource MahApps.Brushes.Accent}"
+                                                      Maximum="100"
+                                                      Minimum="0"
+                                                      Value="{Binding Progress}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Grid>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Label Content="文件数"></Label>
+            <Label Content="{Binding ProcessResultList.Count}"></Label>
+        </StackPanel>
+
+
     </Grid>
+
 </Page>

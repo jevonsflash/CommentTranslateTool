@@ -37,12 +37,21 @@
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Label Content="语言"></Label>
-            <ComboBox Width="100"  Grid.Column="1" ItemsSource="{Binding ParserProviders}" SelectedItem="{Binding CurrentParserProvider}" DisplayMemberPath="Name"   
-            ></ComboBox>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" >
+                <Label Content="语言" VerticalAlignment="Center"></Label>
+                <ComboBox Width="100"  VerticalAlignment="Center" ItemsSource="{Binding ParserProviders}" SelectedItem="{Binding CurrentParserProvider}" DisplayMemberPath="Name"   
+                ></ComboBox>
+
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" >
+                <Button Content="从文件导入" Command="{Binding OpenCommand}" Width="120"></Button>
+
+            </StackPanel>
+         
         </Grid>
         <Grid Grid.Row="2">
 
