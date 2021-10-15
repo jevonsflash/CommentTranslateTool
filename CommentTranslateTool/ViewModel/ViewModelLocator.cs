@@ -8,18 +8,18 @@ namespace Workshop.ViewModel
     {
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<IndexPageViewModel>();
             SimpleIoc.Default.Register<SettingPageViewModel>();
+            SimpleIoc.Default.Register<BatchProcessViewModel>();
 
         }
 
-        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-        public IndexPageViewModel IndexPage => ServiceLocator.Current.GetInstance<IndexPageViewModel>();
-        public SettingPageViewModel SettingPage => ServiceLocator.Current.GetInstance<SettingPageViewModel>();
+        public MainViewModel Main => SimpleIoc.Default.GetInstance<MainViewModel>();
+        public IndexPageViewModel IndexPage => SimpleIoc.Default.GetInstance<IndexPageViewModel>();
+        public SettingPageViewModel SettingPage => SimpleIoc.Default.GetInstance<SettingPageViewModel>();
 
+        public BatchProcessViewModel BatchProcessPage => SimpleIoc.Default.GetInstance<BatchProcessViewModel>();
 
         public static void Cleanup<T>() where T : class
         {

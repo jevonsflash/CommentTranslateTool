@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +14,6 @@ using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using ICSharpCode.AvalonEdit.Document;
 using Workshop.Common;
 using Workshop.Control;
@@ -35,7 +35,7 @@ namespace Workshop.ViewModel
             ContinueCommand = new RelayCommand(ContinueAction);
             CopyToClipboardCommand = new RelayCommand(CopyToClipboardAction);
             this.PropertyChanged += IndexPageViewModel_PropertyChanged;
-            ParserProviders=new List<ParserProvider>();
+            ParserProviders = new List<ParserProvider>();
             ParserProviders.Add(new ParserProvider()
             {
                 Name = "C#",
@@ -107,7 +107,7 @@ namespace Workshop.ViewModel
 
         private void IndexPageViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName==nameof(CurrentParserProvider))
+            if (e.PropertyName == nameof(CurrentParserProvider))
             {
                 _commentParser = CurrentParserProvider.CreateCommentParser();
             }
@@ -127,79 +127,71 @@ namespace Workshop.ViewModel
         private async void ContinueAction()
         {
             var currentContentText = CurrentContentText;
-            var responseText = String.Empty;
+            var task = InvokeHelper.InvokeOnUi<string>(null, () =>
+            {
+                string responseText;
 
-            await Task.Factory.StartNew(async () =>
-             {
-                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                 {
-                     ProgressWindow progressWindow = new ProgressWindow();
-                     progressWindow.ShowDialog("获取数据中");
-
-                 });
-                 var settingInfo = LocalDataService.ReadObjectLocal<SettingInfo>();
+                var settingInfo = LocalDataService.ReadObjectLocal<SettingInfo>();
 
 
-                 if (string.IsNullOrEmpty(currentContentText))
-                 {
-                     responseText = "Please specify the source text.";
-                 }
+                if (string.IsNullOrEmpty(currentContentText))
+                {
+                    responseText = "Please specify the source text.";
+                }
 
 
-                 else if (settingInfo.IsCharLimit && currentContentText.Length > settingInfo.CharLimitCount)
-                 {
-                     responseText = $"Only strings shorter than {settingInfo.CharLimitCount} characters are supported; your input string is " + currentContentText.Length + " characters long.";
-                 }
-                 else
-                 {
-                     try
-                     {
-                         var parser = _commentParser;
-                         var text = string.Empty;
-                         var textCollection = new List<(CommentRegion, string)>();
+                else if (settingInfo.IsCharLimit && currentContentText.Length > settingInfo.CharLimitCount)
+                {
+                    responseText = $"Only strings shorter than {settingInfo.CharLimitCount} characters are supported; your input string is " + currentContentText.Length + " characters long.";
+                }
+                else
+                {
+                    try
+                    {
+                        var parser = _commentParser;
+                        var text = string.Empty;
+                        var textCollection = new List<(CommentRegion, string)>();
 
-                         if (parser != null)
-                         {
-                             var regions = parser.GetCommentRegions(currentContentText).OrderByDescending(c => c.Start);
-                             foreach (var r in regions)
-                             {
-                                 var trim = parser.GetComment(currentContentText.Substring(r.Start, r.Length)).Content.Trim();
-                                 textCollection.Add((r, trim));
-                             }
-                         }
+                        if (parser != null)
+                        {
+                            var regions = parser.GetCommentRegions(currentContentText).OrderByDescending(c => c.Start);
+                            foreach (var r in regions)
+                            {
+                                var trim = parser.GetComment(currentContentText.Substring(r.Start, r.Length)).Content.Trim();
+                                textCollection.Add((r, trim));
+                            }
+                        }
 
-                         var sb = new StringBuilder(currentContentText);
+                        var sb = new StringBuilder(currentContentText);
 
-                         foreach (var t in textCollection)
-                         {
-                             var currentRegion = t.Item1;
-                             var translateResult = await DoTranslate(t.Item2);
-                             sb.Remove(currentRegion.Start, currentRegion.Length);
-                             sb.Insert(currentRegion.Start, currentRegion.Tag.Start);
-                             sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length, translateResult);
-                             sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length + translateResult.Length, currentRegion.Tag.End);
-                         }
+                        foreach (var t in textCollection)
+                        {
+                            var currentRegion = t.Item1;
+                            var translateResult = DoTranslate(t.Item2).Result;
+                            sb.Remove(currentRegion.Start, currentRegion.Length);
+                            sb.Insert(currentRegion.Start, currentRegion.Tag.Start);
+                            sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length, translateResult);
+                            sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length + translateResult.Length, currentRegion.Tag.End);
+                        }
 
-                         responseText = sb.ToString();
-                         ;
+                        responseText = sb.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        responseText = ex.ToString();
+
+                    }
+
+                }
+
+                return responseText;
 
 
-                     }
-                     catch (Exception ex)
-                     {
-                         responseText = ex.ToString();
+            }, (t) =>
+            {
+                ResponseContent.Text = t;
 
-                     }
-                 }
-
-                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                 {
-                     Messenger.Default.Send("", MessengerToken.CLOSEPROGRESS);
-                     ResponseContent.Text = responseText;
-
-                 });
-
-             });
+            });
 
 
         }
@@ -220,7 +212,7 @@ namespace Workshop.ViewModel
             }
 
 
-
+            Thread.Sleep(2000);
             var result = await YouDaoApiHelper.GetWordsAsync(CurrentContent);
 
 

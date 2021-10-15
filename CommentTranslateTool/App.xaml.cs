@@ -6,7 +6,6 @@ using System.Data;
 using System.Windows;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Threading;
 using Workshop.Common;
 using Workshop.Helper;
 
@@ -85,7 +84,6 @@ namespace Workshop
             Current.DispatcherUnhandledException += App_OnDispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             LogHelper.LogFlag = true;
-            DispatcherHelper.Initialize();
 
         }
     }

@@ -2,6 +2,7 @@
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -21,6 +22,26 @@ namespace Workshop.Control
     /// </summary>
     public partial class ProgressWindow : MetroWindow
     {
+        public static ProgressWindow Instance;
+        static ProgressWindow()
+        {
+        }
+
+        public static void StaticShowDialog(string title)
+        {
+            Instance = new ProgressWindow();
+            Instance.ShowDialog(title);
+        }
+
+        public static void StaticUnShowDialog()
+        {
+            if (Instance!=null)
+            {
+                Instance.Close();
+                Instance = null;
+            }
+        }
+
         public double CurrentVal { get; private set; }
         public double TotalVal { get; private set; }
 
@@ -50,6 +71,7 @@ namespace Workshop.Control
 
         private void HandleClose(string obj)
         {
+            Debug.WriteLine("ProgressWindow close by" +obj);
             this.Close();
         }
 
