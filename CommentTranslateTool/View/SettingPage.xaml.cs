@@ -23,6 +23,12 @@ namespace Workshop.View
         public SettingPage()
         {
             InitializeComponent();
+            this.Unloaded += SettingPage_Unloaded;
+        }
+
+        private void SettingPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ViewModelLocator.Cleanup<SettingPageViewModel>();
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)

@@ -54,12 +54,12 @@
                 <Label Content="翻译设置"></Label>
 
                 <ComboBox Grid.Column="1" 
-                          SelectedItem="{Binding SettingInfo.TranslateFrom}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding SettingInfo.TranslateFrom, Mode=TwoWay}" DisplayMemberPath="Name"
                           ItemsSource="{Binding Source={x:Static helper:YouDaoApiHelper.TranslationTypes }}"></ComboBox>
                 <Label Grid.Column="2" Content="->"></Label>
 
                 <ComboBox Grid.Column="3" 
-                          SelectedItem="{Binding SettingInfo.TranslateTo}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding SettingInfo.TranslateTo, Mode=TwoWay}" DisplayMemberPath="Name"
                           ItemsSource="{Binding Source={x:Static helper:YouDaoApiHelper.TranslationTypes }}"></ComboBox>
             </Grid>
 

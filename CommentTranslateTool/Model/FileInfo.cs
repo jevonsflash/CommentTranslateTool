@@ -9,6 +9,23 @@ namespace Workshop.Model
     {
         public string Name { get; set; }
         public string Path { get; set; }
+
+
+
+        private string _status;
+
+        public string Status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                RaisePropertyChanged();
+
+            }
+        }
+
+
         private int _progress;
 
         public int Progress

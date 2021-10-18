@@ -62,6 +62,7 @@ namespace Workshop.ViewModel
                 {
                     Name = DirFileHelper.GetFileName(c),
                     Path = c,
+                    Status = "等待执行"
                 }));
             }
             this.FileList = new ObservableCollection<Model.FileInfo>(allfiles);
@@ -97,7 +98,6 @@ namespace Workshop.ViewModel
                     if (string.IsNullOrEmpty(currentContentText))
                     {
                         MessageBox.Show("Please specify the source text.");
-
                         continue;
 
                     }
@@ -107,12 +107,13 @@ namespace Workshop.ViewModel
                     {
                         MessageBox.Show($"Only strings shorter than {settingInfo.CharLimitCount} characters are supported; your input string is " + currentContentText.Length + " characters long.");
                         continue;
-
                     }
                     else
                     {
                         try
                         {
+                            file.Status = "正在执行";
+
                             var parser = _commentParser;
                             var text = string.Empty;
                             var textCollection = new List<(CommentRegion, string)>();
@@ -132,6 +133,9 @@ namespace Workshop.ViewModel
                                 var sb = new StringBuilder(currentContentText);
 
                                 Regex regex = new Regex(@"(?<=<(\w+)(>| [^>]*>)).*(?=<\/\1>)");
+                                Regex regex2 = new Regex(@"^<(\w+)(>| [^>]*>)$");
+                                Regex regex3 = new Regex(@"^^<\/\w+>$");
+
                                 foreach (var t in textCollection)
                                 {
                                     double pcent = textCollection.IndexOf(t) * 1.0 / textCollection.Count;
@@ -147,25 +151,32 @@ namespace Workshop.ViewModel
                                             var matchResult = regex.Match(t.Item2);
                                             contentToTranslate = matchResult.Value;
                                             subStartIndex = matchResult.Index;
-                                        }
+                                            if (!string.IsNullOrEmpty(contentToTranslate))
+                                            {
+                                                translateResult = DoTranslate(contentToTranslate).Result;
+                                            }
+                                            else
+                                            {
+                                                translateResult = contentToTranslate;
+                                            }
 
-                                        if (!string.IsNullOrEmpty(contentToTranslate))
-                                        {
-                                            translateResult = DoTranslate(contentToTranslate).Result;
+                                            if (subStartIndex != 0)
+                                            {
+                                                var ssb = new StringBuilder();
+                                                ssb.Append(t.Item2.Substring(0, subStartIndex));
+                                                ssb.Append(translateResult);
+                                                ssb.Append(t.Item2.Substring(subStartIndex + contentToTranslate.Length));
+                                                translateResult = ssb.ToString();
+                                            }
                                         }
-                                        else
+                                        else if (regex2.IsMatch(t.Item2) || regex3.IsMatch(t.Item2))
                                         {
                                             translateResult = contentToTranslate;
                                         }
 
-
-                                        if (subStartIndex != 0)
+                                        else
                                         {
-                                            var ssb = new StringBuilder();
-                                            ssb.Append(t.Item2.Substring(0, subStartIndex));
-                                            ssb.Append(translateResult);
-                                            ssb.Append(t.Item2.Substring(subStartIndex + contentToTranslate.Length));
-                                            translateResult = ssb.ToString();
+                                            translateResult = DoTranslate(contentToTranslate).Result;
                                         }
                                     }
                                     else
@@ -183,10 +194,12 @@ namespace Workshop.ViewModel
                                 DirFileHelper.WriteFile(file.Path, responseText);
                             }
                             file.Progress = 100;
+                            file.Status = "执行完成";
 
                         }
                         catch (Exception ex)
                         {
+                            file.Status = "执行失败";
                             var result = MessageBox.Show(ex.Message + ",批量执行过程中出现异常，是否继续", "批量执行过程中出现异常，是否继续", System.Windows.Forms.MessageBoxButtons.YesNo);
                             if (result == DialogResult.Yes)
                             {

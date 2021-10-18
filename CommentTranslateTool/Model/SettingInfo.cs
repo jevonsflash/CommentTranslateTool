@@ -16,7 +16,7 @@ namespace Workshop.Model
             this.TranslateFrom = YouDaoApiHelper.TranslationTypes.First();
         }
 
-        public bool _isCharLimit;
+        private bool _isCharLimit;
 
         public bool IsCharLimit
         {
@@ -29,7 +29,7 @@ namespace Workshop.Model
             }
         }
 
-        public bool _isTranslateAngleBracketElement;
+        private bool _isTranslateAngleBracketElement;
 
         public bool IsTranslateAngleBracketElement
         {
@@ -42,7 +42,7 @@ namespace Workshop.Model
             }
         }
 
-        public int _charLimitCount;
+        private int _charLimitCount;
 
         public int CharLimitCount
         {

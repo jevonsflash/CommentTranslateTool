@@ -113,6 +113,8 @@ namespace Workshop.ViewModel
 
                         var sb = new StringBuilder(currentContentText);
                         Regex regex = new Regex(@"(?<=<(\w+)(>| [^>]*>)).*(?=<\/\1>)");
+                        Regex regex2 = new Regex(@"^<(\w+)(>| [^>]*>)$");
+                        Regex regex3 = new Regex(@"^^<\/\w+>$");
 
                         foreach (var t in textCollection)
                         {
@@ -128,25 +130,32 @@ namespace Workshop.ViewModel
                                     var matchResult = regex.Match(t.Item2);
                                     contentToTranslate = matchResult.Value;
                                     subStartIndex = matchResult.Index;
-                                }
+                                    if (!string.IsNullOrEmpty(contentToTranslate))
+                                    {
+                                        translateResult = DoTranslate(contentToTranslate).Result;
+                                    }
+                                    else
+                                    {
+                                        translateResult = contentToTranslate;
+                                    }
 
-                                if (!string.IsNullOrEmpty(contentToTranslate))
-                                {
-                                    translateResult = DoTranslate(contentToTranslate).Result;
+                                    if (subStartIndex != 0)
+                                    {
+                                        var ssb = new StringBuilder();
+                                        ssb.Append(t.Item2.Substring(0, subStartIndex));
+                                        ssb.Append(translateResult);
+                                        ssb.Append(t.Item2.Substring(subStartIndex + contentToTranslate.Length));
+                                        translateResult = ssb.ToString();
+                                    }
                                 }
-                                else
+                                else if (regex2.IsMatch(t.Item2) || regex3.IsMatch(t.Item2))
                                 {
                                     translateResult = contentToTranslate;
                                 }
 
-
-                                if (subStartIndex != 0)
+                                else
                                 {
-                                    var ssb = new StringBuilder();
-                                    ssb.Append(t.Item2.Substring(0, subStartIndex));
-                                    ssb.Append(translateResult);
-                                    ssb.Append(t.Item2.Substring(subStartIndex + contentToTranslate.Length));
-                                    translateResult = ssb.ToString();
+                                    translateResult = DoTranslate(contentToTranslate).Result;
                                 }
                             }
                             else

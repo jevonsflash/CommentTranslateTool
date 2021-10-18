@@ -6,6 +6,7 @@
     <converter:Bool2VisibilityConverter x:Key="Bool2VisibilityConverter"></converter:Bool2VisibilityConverter>
     <converter:Date2StringConverter x:Key="Date2StringConverter"></converter:Date2StringConverter>
     <converter:Enum2StringConverter x:Key="Enum2StringConverter"></converter:Enum2StringConverter>
-	<converter:True2FalseConverter x:Key="True2FalseConverter"></converter:True2FalseConverter>
+    <converter:True2FalseConverter x:Key="True2FalseConverter"></converter:True2FalseConverter>
+    <converter:Status2ColorConverter x:Key="Status2ColorConverter"></converter:Status2ColorConverter>
 
 </ResourceDictionary>

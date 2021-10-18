@@ -55,20 +55,22 @@
                                                       Margin="5 2"
                                                       VerticalAlignment="Center"
                                                       Background="Transparent"
-                                                      Foreground="{DynamicResource MahApps.Brushes.Accent}"
+                                                      Foreground="{Binding Status, Converter={StaticResource Status2ColorConverter}}"
                                                       Maximum="100"
                                                       Minimum="0"
                                                       Value="{Binding Progress}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="状态" Binding="{Binding Status }"></DataGridTextColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
 
         </Grid>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
             <Label Content="文件数"></Label>
-            <Label Content="{Binding ProcessResultList.Count}"></Label>
+            <Label Content="{Binding FileList.Count}"></Label>
         </StackPanel>
 
 
