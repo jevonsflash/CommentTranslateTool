@@ -11,7 +11,6 @@
 这是独立开发者的一个开源项目, 希望得到您的意见反馈，请将Bugs汇报至我的邮箱
 
  ![avatar](https://github.com/MatoApps/CommentTranslateTool/blob/master/CTT/screenshot.png)
- ![avatar](https://github.com/MatoApps/CommentTranslateTool/blob/master/CTT/screenshot2.png)
 
 ## 更新内容：
 
@@ -23,7 +22,7 @@ V1.0.1       | 2021-10-18     | 1. 增加跳过翻译自动注释中的标签功
 
 ## 安装说明：
 
-1. 下载安装包 https://raw.githubusercontent.com/MatoApps/CommentTranslateTool/master/CTT/ctt.zip
+1. 下载安装包 https://github.com/MatoApps/CommentTranslateTool/raw/master/CTT/setup.zip
 
 2. 解压并双击 setup.exe 安装
 
