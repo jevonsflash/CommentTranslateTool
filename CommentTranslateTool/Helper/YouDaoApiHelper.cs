@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -10,15 +11,54 @@ using Workshop.Service;
 
 namespace Workshop.Helper
 {
-    internal class YouDaoApiHelper
+    public class YouDaoApiHelper
     {
         const string _appKey = "75766d8fc97f34a3";
         const string _appSecret = "rFkTqsDws1bCoETcxSL7afG33emwJdr5";
 
+
+
         public YouDaoApiHelper()
         {
-
         }
+
+
+        public static List<YouDaoTranslationType> TranslationTypes => new List<YouDaoTranslationType>(
+            )
+        {
+            new YouDaoTranslationType()
+            {
+                Name = "自动检测",
+                Type = "auto"
+            },
+            new YouDaoTranslationType()
+            {
+                Name = "英文",
+                Type = "en"
+            },
+            new YouDaoTranslationType()
+            {
+                Name = "中文",
+                Type = "zh-CHS"
+            },
+            new YouDaoTranslationType()
+            {
+                Name = "日文",
+                Type = "ja"
+            },
+            new YouDaoTranslationType()
+            {
+                Name = "俄文",
+                Type = "ru"
+            },
+            new YouDaoTranslationType()
+            {
+                Name = "法文",
+                Type = "fr"
+            },
+
+        };
+
         public static async Task<YouDaoTranslationData> GetWordsAsync(string queryText)
         {
             var requestUrl = GetRequestUrl(queryText);

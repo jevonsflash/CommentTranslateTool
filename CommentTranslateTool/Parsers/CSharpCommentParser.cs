@@ -43,7 +43,7 @@ namespace Workshop.Parsers
             };
         }
 
-        public override Comment GetComment(string commentText)
+        public override Comment GetComment(string commentText, ParseTag currenTag)
         {
             var lines = commentText.Split('\n');
             var builder = new StringBuilder();
@@ -67,7 +67,7 @@ namespace Workshop.Parsers
                 builder.Remove(builder.Length - Environment.NewLine.Length, Environment.NewLine.Length);
             }
 
-            return base.GetComment(builder.ToString());
+            return base.GetComment(builder.ToString(), currenTag);
         }
 
         public override TextPositions GetPositions(Comment comment)
@@ -79,5 +79,6 @@ namespace Workshop.Parsers
 
             return base.GetPositions(comment);
         }
+
     }
 }

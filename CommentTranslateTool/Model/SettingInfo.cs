@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Workshop.Helper;
 
 namespace Workshop.Model
 {
@@ -11,44 +12,8 @@ namespace Workshop.Model
 
         public SettingInfo()
         {
-            var defaulTranslationTypes = new List<YouDaoTranslationType>(
-            )
-            {
-                new YouDaoTranslationType()
-                {
-                    Name = "自动检测",
-                    Type = "auto"
-                },
-                new YouDaoTranslationType()
-                {
-                    Name = "英文",
-                    Type = "en"
-                },
-                new YouDaoTranslationType()
-                {
-                    Name = "中文",
-                    Type = "zh-CHS"
-                },
-                new YouDaoTranslationType()
-                {
-                    Name = "日文",
-                    Type = "ja"
-                },
-                new YouDaoTranslationType()
-                {
-                    Name = "俄文",
-                    Type = "ru"
-                },
-                new YouDaoTranslationType()
-                {
-                    Name = "法文",
-                    Type = "fr"
-                },
-
-            };
-            this.TranslateTypes = new List<YouDaoTranslationType>(defaulTranslationTypes);
-            this.TranslateTo = this.TranslateTypes.First();
-            this.TranslateFrom = this.TranslateTypes.First();
+            this.TranslateTo = YouDaoApiHelper.TranslationTypes.First();
+            this.TranslateFrom = YouDaoApiHelper.TranslationTypes.First();
         }
 
         public bool _isCharLimit;
@@ -60,6 +25,19 @@ namespace Workshop.Model
             {
                 _isCharLimit = value;
                 RaisePropertyChanged(nameof(IsCharLimit));
+
+            }
+        }
+
+        public bool _isTranslateAngleBracketElement;
+
+        public bool IsTranslateAngleBracketElement
+        {
+            get { return _isTranslateAngleBracketElement; }
+            set
+            {
+                _isTranslateAngleBracketElement = value;
+                RaisePropertyChanged(nameof(IsTranslateAngleBracketElement));
 
             }
         }
@@ -102,18 +80,7 @@ namespace Workshop.Model
 
             }
         }
-
-        private List<YouDaoTranslationType> _translateTypes;
-
-        public List<YouDaoTranslationType> TranslateTypes
-        {
-            get { return _translateTypes; }
-            set
-            {
-                _translateTypes = value;
-                RaisePropertyChanged(nameof(TranslateTypes));
-
-            }
-        }
     }
+
+
 }

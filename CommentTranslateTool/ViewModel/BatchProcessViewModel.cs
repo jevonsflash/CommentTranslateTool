@@ -4,18 +4,18 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Workshop.Helper;
 using Workshop.Model;
 using Workshop.Parsers;
 using Workshop.Service;
-using FileInfo = System.IO.FileInfo;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Workshop.ViewModel
 {
@@ -122,34 +122,80 @@ namespace Workshop.ViewModel
                                 var regions = parser.GetCommentRegions(currentContentText).OrderByDescending(c => c.Start);
                                 foreach (var r in regions)
                                 {
-                                    var trim = parser.GetComment(currentContentText.Substring(r.Start, r.Length)).Content.Trim();
+                                    var trim = parser.GetComment(currentContentText.Substring(r.Start, r.Length), r.Tag).Content.Trim();
                                     textCollection.Add((r, trim));
                                 }
                             }
 
-                            var sb = new StringBuilder(currentContentText);
-
-                            foreach (var t in textCollection)
+                            if (textCollection.Count > 0)
                             {
-                                double pcent = textCollection.IndexOf(t) * 1.0 / textCollection.Count;
+                                var sb = new StringBuilder(currentContentText);
 
-                                var currentRegion = t.Item1;
-                                var translateResult = DoTranslate(t.Item2).Result;
-                                sb.Remove(currentRegion.Start, currentRegion.Length);
-                                sb.Insert(currentRegion.Start, currentRegion.Tag.Start);
-                                sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length, translateResult);
-                                sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length + translateResult.Length, currentRegion.Tag.End);
-                                file.Progress = (int)Math.Ceiling(pcent * 100);
+                                Regex regex = new Regex(@"(?<=<(\w+)(>| [^>]*>)).*(?=<\/\1>)");
+                                foreach (var t in textCollection)
+                                {
+                                    double pcent = textCollection.IndexOf(t) * 1.0 / textCollection.Count;
+                                    var currentRegion = t.Item1;
+                                    string translateResult;
+                                    var contentToTranslate = t.Item2;
+
+                                    if (!settingInfo.IsTranslateAngleBracketElement)
+                                    {
+                                        var subStartIndex = 0;
+                                        if (regex.IsMatch(t.Item2))
+                                        {
+                                            var matchResult = regex.Match(t.Item2);
+                                            contentToTranslate = matchResult.Value;
+                                            subStartIndex = matchResult.Index;
+                                        }
+
+                                        if (!string.IsNullOrEmpty(contentToTranslate))
+                                        {
+                                            translateResult = DoTranslate(contentToTranslate).Result;
+                                        }
+                                        else
+                                        {
+                                            translateResult = contentToTranslate;
+                                        }
+
+
+                                        if (subStartIndex != 0)
+                                        {
+                                            var ssb = new StringBuilder();
+                                            ssb.Append(t.Item2.Substring(0, subStartIndex));
+                                            ssb.Append(translateResult);
+                                            ssb.Append(t.Item2.Substring(subStartIndex + contentToTranslate.Length));
+                                            translateResult = ssb.ToString();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        translateResult = DoTranslate(contentToTranslate).Result;
+                                    }
+                                    sb.Remove(currentRegion.Start, currentRegion.Length);
+                                    sb.Insert(currentRegion.Start, currentRegion.Tag.Start);
+                                    sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length, translateResult);
+                                    sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length + translateResult.Length, currentRegion.Tag.End);
+                                    file.Progress = (int)Math.Ceiling(pcent * 100);
+                                }
+
+                                responseText = sb.ToString();
+                                DirFileHelper.WriteFile(file.Path, responseText);
                             }
-
-                            responseText = sb.ToString();
-                            DirFileHelper.WriteFile(file.Path, responseText);
                             file.Progress = 100;
 
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.ToString());
+                            var result = MessageBox.Show(ex.Message + ",批量执行过程中出现异常，是否继续", "批量执行过程中出现异常，是否继续", System.Windows.Forms.MessageBoxButtons.YesNo);
+                            if (result == DialogResult.Yes)
+                            {
+
+                            }
+                            else
+                            {
+                                return;
+                            }
 
                         }
 

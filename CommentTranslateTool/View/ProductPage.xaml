@@ -10,10 +10,11 @@
 
     <ScrollViewer>
         <StackPanel Height="1000">
-			<TextBlock TextWrapping="Wrap" Text="Roslyn 是以 API 为驱动的下一代编译器。RoslynSyntaxTool是利用编译器的API，来创建描述该C#程序的语法树。与在运行时创建语法树对象SyntaxTree.ParseText()相反，此工具返回在编译和执行时构造这种语法树对象的C#源代码, 在动态生成代理类的时候能派上用场"></TextBlock>
-			<Image Source="/Assets/1.png" Height="500"></Image>
-			<TextBlock TextWrapping="Wrap" Text="您可以使用Visual Studio的.NET Compiler Platform SDK工具查看C#源代码的语法树，以帮助阅读和理解"></TextBlock>
-	        <Image Source="/Assets/2.png" Height="500"></Image>
+            <TextBlock TextWrapping="Wrap" Text="这是一个可智能识别源代码中的注释部分，并将其翻译成指定的语言的小工具。 翻译接口来自有道自然语言翻译服务(ai.youdao.com)"></TextBlock>
+            <TextBlock TextWrapping="Wrap" Text="目前可以提供的翻译语言有：中文，英文，日文，俄文，法文"></TextBlock>
+			<Image HorizontalAlignment="Left" Source="/Assets/1.png" Height="500"></Image>
+			<TextBlock TextWrapping="Wrap" Text="您也可以指定一个目录，自动批量翻译这个目录下的所有源代码文件中的注释到指定的语言"></TextBlock>
+            <Image HorizontalAlignment="Left" Source="/Assets/2.png" Height="300"></Image>
 		</StackPanel>
     </ScrollViewer>
 </Page>

@@ -22,19 +22,28 @@ namespace Workshop.Parsers
 
         #region Methods
 
-        public virtual Comment GetComment(string commentText)
+        public virtual Comment GetComment(string commentText, ParseTag currenTag)
         {
             var text = commentText;
 
-            //Remove tags
-            foreach (var tag in Tags)
+            if (currenTag != null)
             {
-                if (commentText.StartsWith(tag.Start) && commentText.EndsWith(tag.End))
+                text = text.Substring(currenTag.Start.Length, commentText.Length - currenTag.Start.Length - currenTag.End.Length);
+
+            }
+            else
+            {
+                //Remove tags
+                foreach (var tag in Tags)
                 {
-                    text = text.Substring(tag.Start.Length, commentText.Length - tag.Start.Length - tag.End.Length);
-                    break;
+                    if (commentText.StartsWith(tag.Start) && commentText.EndsWith(tag.End))
+                    {
+                        text = text.Substring(tag.Start.Length, commentText.Length - tag.Start.Length - tag.End.Length);
+                        break;
+                    }
                 }
             }
+
 
             //Split text to lines
             var lines = text.Split('\n');
@@ -50,7 +59,7 @@ namespace Workshop.Parsers
             var marginTop = GetMarginTop(lines);
 
             //Get content
-            text = builder.ToString().Trim();
+            text = TextHandler(builder.ToString().Trim());
 
             //Create comment
             var comment = new Comment()
@@ -77,7 +86,10 @@ namespace Workshop.Parsers
             return TextPositions.Bottom;
         }
 
-
+        public virtual string TextHandler(string text)
+        {
+            return text;
+        }
 
         public IEnumerable<CommentRegion> GetCommentRegions(string text, int startFrom = 0)
         {

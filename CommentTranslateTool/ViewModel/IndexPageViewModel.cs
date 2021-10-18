@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +22,7 @@ using Workshop.Helper;
 using Workshop.Model;
 using Workshop.Parsers;
 using Workshop.Service;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Workshop.ViewModel
 {
@@ -76,20 +78,20 @@ namespace Workshop.ViewModel
             var currentContentText = CurrentContentText;
             var task = InvokeHelper.InvokeOnUi<string>(null, () =>
             {
-                string responseText;
+                string responseText = string.Empty;
 
                 var settingInfo = LocalDataService.ReadObjectLocal<SettingInfo>();
 
 
                 if (string.IsNullOrEmpty(currentContentText))
                 {
-                    responseText = "Please specify the source text.";
+                    MessageBox.Show("Please specify the source text.");
                 }
 
 
                 else if (settingInfo.IsCharLimit && currentContentText.Length > settingInfo.CharLimitCount)
                 {
-                    responseText = $"Only strings shorter than {settingInfo.CharLimitCount} characters are supported; your input string is " + currentContentText.Length + " characters long.";
+                    MessageBox.Show($"Only strings shorter than {settingInfo.CharLimitCount} characters are supported; your input string is " + currentContentText.Length + " characters long.");
                 }
                 else
                 {
@@ -104,17 +106,53 @@ namespace Workshop.ViewModel
                             var regions = parser.GetCommentRegions(currentContentText).OrderByDescending(c => c.Start);
                             foreach (var r in regions)
                             {
-                                var trim = parser.GetComment(currentContentText.Substring(r.Start, r.Length)).Content.Trim();
+                                var trim = parser.GetComment(currentContentText.Substring(r.Start, r.Length), r.Tag).Content.Trim();
                                 textCollection.Add((r, trim));
                             }
                         }
 
                         var sb = new StringBuilder(currentContentText);
+                        Regex regex = new Regex(@"(?<=<(\w+)(>| [^>]*>)).*(?=<\/\1>)");
 
                         foreach (var t in textCollection)
                         {
                             var currentRegion = t.Item1;
-                            var translateResult = DoTranslate(t.Item2).Result;
+                            string translateResult;
+                            var contentToTranslate = t.Item2;
+
+                            if (!settingInfo.IsTranslateAngleBracketElement)
+                            {
+                                var subStartIndex = 0;
+                                if (regex.IsMatch(t.Item2))
+                                {
+                                    var matchResult = regex.Match(t.Item2);
+                                    contentToTranslate = matchResult.Value;
+                                    subStartIndex = matchResult.Index;
+                                }
+
+                                if (!string.IsNullOrEmpty(contentToTranslate))
+                                {
+                                    translateResult = DoTranslate(contentToTranslate).Result;
+                                }
+                                else
+                                {
+                                    translateResult = contentToTranslate;
+                                }
+
+
+                                if (subStartIndex != 0)
+                                {
+                                    var ssb = new StringBuilder();
+                                    ssb.Append(t.Item2.Substring(0, subStartIndex));
+                                    ssb.Append(translateResult);
+                                    ssb.Append(t.Item2.Substring(subStartIndex + contentToTranslate.Length));
+                                    translateResult = ssb.ToString();
+                                }
+                            }
+                            else
+                            {
+                                translateResult = DoTranslate(contentToTranslate).Result;
+                            }
                             sb.Remove(currentRegion.Start, currentRegion.Length);
                             sb.Insert(currentRegion.Start, currentRegion.Tag.Start);
                             sb.Insert(currentRegion.Start + currentRegion.Tag.Start.Length, translateResult);
@@ -125,7 +163,7 @@ namespace Workshop.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        responseText = ex.ToString();
+                        MessageBox.Show(ex.Message);
 
                     }
 

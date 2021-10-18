@@ -23,7 +23,7 @@
                     VerticalAlignment="Center" 
                     HorizontalAlignment="Center"
                     Margin="12,0">
-			<TextBlock HorizontalAlignment="Center" Text="Roslyn Syntax Tool" FontSize="{StaticResource LargeFontSize}"></TextBlock>
+            <TextBlock HorizontalAlignment="Center" Text="Comment Translate Tool" FontSize="{StaticResource LargeFontSize}"></TextBlock>
             <TextBlock HorizontalAlignment="Center" Text="1.0" Margin="0,5"></TextBlock>
         </StackPanel>
         <StackPanel Grid.Row="1" 
@@ -36,7 +36,7 @@
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <Image Source="/timg.gif" Height="22" Width="22"></Image>
                 <TextBlock VerticalAlignment="Center">
-                    <Hyperlink Click="Hyperlink_OnClick" >https://github.com/MatoApps/RoslynSyntaxTool</Hyperlink>
+                    <Hyperlink Click="Hyperlink_OnClick" >https://github.com/MatoApps/CommentTranslateTool</Hyperlink>
                 </TextBlock>
             </StackPanel>
         </StackPanel>
