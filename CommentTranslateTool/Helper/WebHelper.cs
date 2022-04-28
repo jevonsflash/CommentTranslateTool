@@ -7,7 +7,6 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using GalaSoft.MvvmLight.Messaging;
 using Workshop.Common;
 
 namespace Workshop.Helper

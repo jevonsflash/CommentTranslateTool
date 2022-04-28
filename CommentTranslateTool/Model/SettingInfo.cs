@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using Workshop.Helper;
 
 namespace Workshop.Model
 {
-    public class SettingInfo : ViewModelBase
+    public class SettingInfo : ObservableObject
     {
 
         public SettingInfo()
@@ -24,7 +24,7 @@ namespace Workshop.Model
             set
             {
                 _isCharLimit = value;
-                RaisePropertyChanged(nameof(IsCharLimit));
+                OnPropertyChanged(nameof(IsCharLimit));
 
             }
         }
@@ -37,7 +37,7 @@ namespace Workshop.Model
             set
             {
                 _isTranslateAngleBracketElement = value;
-                RaisePropertyChanged(nameof(IsTranslateAngleBracketElement));
+                OnPropertyChanged(nameof(IsTranslateAngleBracketElement));
 
             }
         }
@@ -50,7 +50,7 @@ namespace Workshop.Model
             set
             {
                 _charLimitCount = value;
-                RaisePropertyChanged(nameof(CharLimitCount));
+                OnPropertyChanged(nameof(CharLimitCount));
 
             }
         }
@@ -62,7 +62,7 @@ namespace Workshop.Model
             set
             {
                 _translateTo = value;
-                RaisePropertyChanged(nameof(TranslateTo));
+                OnPropertyChanged(nameof(TranslateTo));
 
             }
         }
@@ -76,7 +76,7 @@ namespace Workshop.Model
             set
             {
                 _translateFrom = value;
-                RaisePropertyChanged(nameof(TranslateFrom));
+                OnPropertyChanged(nameof(TranslateFrom));
 
             }
         }

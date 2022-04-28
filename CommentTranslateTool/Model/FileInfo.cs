@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Workshop.Model
 {
-    public class FileInfo : ViewModelBase
+    public class FileInfo : ObservableObject
     {
         public string Name { get; set; }
         public string Path { get; set; }
@@ -20,7 +20,7 @@ namespace Workshop.Model
             set
             {
                 _status = value;
-                RaisePropertyChanged();
+                OnPropertyChanged();
 
             }
         }
@@ -34,7 +34,7 @@ namespace Workshop.Model
             set
             {
                 _progress = value;
-                RaisePropertyChanged();
+                OnPropertyChanged();
             }
         }
 

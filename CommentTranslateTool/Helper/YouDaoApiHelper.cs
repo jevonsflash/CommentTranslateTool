@@ -13,11 +13,6 @@ namespace Workshop.Helper
 {
     public class YouDaoApiHelper
     {
-        const string _appKey = "75766d8fc97f34a3";
-        const string _appSecret = "rFkTqsDws1bCoETcxSL7afG33emwJdr5";
-
-
-
         public YouDaoApiHelper()
         {
         }
@@ -87,13 +82,13 @@ namespace Workshop.Helper
             string salt = DateTime.Now.Millisecond.ToString();
 
             MD5 md5 = new MD5CryptoServiceProvider();
-            string md5Str = _appKey + queryText + salt + _appSecret;
+            string md5Str = ApiKeys._appKey + queryText + salt + ApiKeys._appSecret;
             byte[] output = md5.ComputeHash(Encoding.UTF8.GetBytes(md5Str));
             string sign = BitConverter.ToString(output).Replace("-", "");
 
             var requestUrl = string.Format(
                 "http://openapi.youdao.com/api?appKey={0}&q={1}&from={2}&to={3}&sign={4}&salt={5}",
-                _appKey,
+ApiKeys._appKey,
                 queryText,
                 _from, _to, sign, salt);
 

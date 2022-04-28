@@ -9,8 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Workshop.Helper;
 using Workshop.Model;
 using Workshop.Parsers;
@@ -20,7 +20,7 @@ using MessageBox = System.Windows.Forms.MessageBox;
 namespace Workshop.ViewModel
 {
 
-    public class BatchProcessViewModel : ViewModelBase
+    public class BatchProcessViewModel : ObservableObject
     {
         private ICommentParser _commentParser;
 
@@ -234,9 +234,16 @@ namespace Workshop.ViewModel
             var result = await YouDaoApiHelper.GetWordsAsync(CurrentContent);
 
 
-            if (result.YouDaoTranslation.FirstTranslation.Count > 0)
+            if (result.YouDaoTranslation.FirstTranslation != null)
             {
-                trans = result.YouDaoTranslation.FirstTranslation[0];
+                if (result.YouDaoTranslation.FirstTranslation.Count > 0)
+                {
+                    trans = result.YouDaoTranslation.FirstTranslation[0];
+                }
+            }
+            else
+            {
+                throw new Exception("网络错误，返回信息" + result.ResultDetail);
             }
 
             return trans;
@@ -253,7 +260,7 @@ namespace Workshop.ViewModel
             set
             {
                 _currentParserProvider = value;
-                RaisePropertyChanged(nameof(CurrentParserProvider));
+                OnPropertyChanged(nameof(CurrentParserProvider));
             }
         }
 
@@ -265,7 +272,7 @@ namespace Workshop.ViewModel
             set
             {
                 _parserProviders = value;
-                RaisePropertyChanged(nameof(ParserProviders));
+                OnPropertyChanged(nameof(ParserProviders));
             }
         }
 
@@ -278,7 +285,7 @@ namespace Workshop.ViewModel
             set
             {
                 _fileList = value;
-                RaisePropertyChanged(nameof(FileList));
+                OnPropertyChanged(nameof(FileList));
             }
         }
 

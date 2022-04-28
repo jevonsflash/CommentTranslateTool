@@ -1,6 +1,5 @@
-using CommonServiceLocator;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Workshop.View;
 
 namespace Workshop.ViewModel
@@ -9,23 +8,19 @@ namespace Workshop.ViewModel
     {
         public ViewModelLocator()
         {
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<IndexPageViewModel>();
-            SimpleIoc.Default.Register<SettingPageViewModel>();
-            SimpleIoc.Default.Register<BatchProcessViewModel>();
+
 
         }
 
-        public MainViewModel Main => SimpleIoc.Default.GetInstance<MainViewModel>();
-        public IndexPageViewModel IndexPage => SimpleIoc.Default.GetInstance<IndexPageViewModel>();
-        public SettingPageViewModel SettingPage => SimpleIoc.Default.GetInstance<SettingPageViewModel>();
+        public MainViewModel Main => Ioc.Default.GetRequiredService<MainViewModel>();
+        public IndexPageViewModel IndexPage => Ioc.Default.GetRequiredService<IndexPageViewModel>();
+        public SettingPageViewModel SettingPage => Ioc.Default.GetRequiredService<SettingPageViewModel>();
 
-        public BatchProcessViewModel BatchProcessPage => SimpleIoc.Default.GetInstance<BatchProcessViewModel>();
+        public BatchProcessViewModel BatchProcessPage => Ioc.Default.GetRequiredService<BatchProcessViewModel>();
 
-        public static void Cleanup<T>() where T : ViewModelBase
+        public static void Cleanup<T>() where T : ObservableObject
         {
-            SimpleIoc.Default.Unregister<T>();
-            SimpleIoc.Default.Register<T>();
+
         }
     }
 }

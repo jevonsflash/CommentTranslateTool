@@ -12,10 +12,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ICSharpCode.AvalonEdit.Document;
+using Newtonsoft.Json;
 using Workshop.Common;
 using Workshop.Control;
 using Workshop.Helper;
@@ -26,7 +26,7 @@ using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Workshop.ViewModel
 {
-    public class IndexPageViewModel : ViewModelBase
+    public class IndexPageViewModel : ObservableObject
     {
         private ICommentParser _commentParser;
 
@@ -209,12 +209,17 @@ namespace Workshop.ViewModel
             Thread.Sleep(2000);
             var result = await YouDaoApiHelper.GetWordsAsync(CurrentContent);
 
-
-            if (result.YouDaoTranslation.FirstTranslation.Count > 0)
+            if (result.YouDaoTranslation.FirstTranslation != null)
             {
-                trans = result.YouDaoTranslation.FirstTranslation[0];
+                if (result.YouDaoTranslation.FirstTranslation.Count > 0)
+                {
+                    trans = result.YouDaoTranslation.FirstTranslation[0];
+                }
             }
-
+            else
+            {
+                throw new Exception("网络错误，返回信息" + result.ResultDetail);
+            }
             return trans;
 
         }
@@ -230,7 +235,7 @@ namespace Workshop.ViewModel
             set
             {
                 _currentContent = value;
-                RaisePropertyChanged(nameof(CurrentContent));
+                OnPropertyChanged(nameof(CurrentContent));
             }
         }
 
@@ -242,7 +247,7 @@ namespace Workshop.ViewModel
             set
             {
                 _responseContent = value;
-                RaisePropertyChanged(nameof(ResponseContent));
+                OnPropertyChanged(nameof(ResponseContent));
             }
         }
 
@@ -255,7 +260,7 @@ namespace Workshop.ViewModel
             set
             {
                 _currentParserProvider = value;
-                RaisePropertyChanged(nameof(CurrentParserProvider));
+                OnPropertyChanged(nameof(CurrentParserProvider));
             }
         }
 
@@ -267,7 +272,7 @@ namespace Workshop.ViewModel
             set
             {
                 _parserProviders = value;
-                RaisePropertyChanged(nameof(ParserProviders));
+                OnPropertyChanged(nameof(ParserProviders));
             }
         }
 
