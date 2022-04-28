@@ -36,7 +36,7 @@ public const string _appSecret = "{your app secret}";
 
 ## 运行环境
 
-* Microsoft Windows 7 及以上
+* Microsoft Windows 10 及以上
 
 * .Net 6 运行时
 
