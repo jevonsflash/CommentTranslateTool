@@ -193,19 +193,6 @@ namespace Workshop.ViewModel
         private async Task<string> DoTranslate(string CurrentContent)
         {
             var trans = "";
-            if (CurrentContent.Contains("杨晓宇"))
-            {
-                Window sh = new Window();
-                sh.Topmost = true;
-                sh.Background = new SolidColorBrush(Color.FromArgb(255, 47, 58, 65));
-                var img = new Image();
-                img.Source = new BitmapImage(new Uri("pack://application:,,,/Resources/sh.jpg"));
-                sh.Content = img;
-                sh.ShowDialog();
-
-            }
-
-
             Thread.Sleep(2000);
             var result = await YouDaoApiHelper.GetWordsAsync(CurrentContent);
 
